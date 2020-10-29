@@ -33,7 +33,22 @@ class _WikiPediaScreenState extends State<WikiPediaScreen> {
               child: Row(
                 textDirection: TextDirection.rtl,
                 children: <Widget>[
-                  FlatButton(onPressed: () {getNews(myController.text);}, child: Text("Search")),
+                  FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        side: BorderSide(color: Colors.red)),
+                    color: Colors.white,
+                    textColor: Colors.red,
+                    padding: EdgeInsets.only(left: 5.0),
+                    onPressed: () {getNews(myController.text);},
+                    child: Text(
+                      "Search".toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ),
+                  //FlatButton(onPressed: () {getNews(myController.text);}, child: Text("Search")),
                   Expanded(child: new TextField(
                     controller: myController,
                     decoration: InputDecoration(
@@ -54,38 +69,32 @@ class _WikiPediaScreenState extends State<WikiPediaScreen> {
             ),
           ],
         )
-    //     body: Container(
-    // child: ListView.builder(
-    // itemCount: this.items.length,
-    //     itemBuilder: _listViewItemBuilder
-    // ),
-    // )
     );
   }
 
   Widget _listViewItemBuilder(BuildContext context, int index){
-    var newsDetail = this.items[index];
+    var wikipediaDetail = this.items[index];
     return ListTile(
         contentPadding: EdgeInsets.all(10.0),
-        leading: _itemThumbnail(newsDetail),
-        title: _itemTitle(newsDetail),
+        leading: _itemThumbnail(wikipediaDetail),
+        title: _itemTitle(wikipediaDetail),
         onTap: (){
-          _navigationToNewsDetail(context, newsDetail);
+          _navigationToNewsDetail(context, wikipediaDetail);
         });
   }
 
-  void _navigationToNewsDetail(BuildContext context, WikiPediaDetail newsDetail){
+  void _navigationToNewsDetail(BuildContext context, WikiPediaDetail wikipediaDetail){
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context){return WikiPediaInfo(newsDetail);}
+            builder: (context){return WikiPediaInfo(wikipediaDetail);}
         ));
   }
 
-  Widget _itemThumbnail(WikiPediaDetail newsDetail){
+  Widget _itemThumbnail(WikiPediaDetail wikipediaDetail){
     return Container(
       constraints: BoxConstraints.tightFor(width: 100.0),
-      child: newsDetail.url == null ? null : Image.network(newsDetail.url, fit: BoxFit.fitWidth),
+      child: wikipediaDetail.url == null ? null : Image.network(wikipediaDetail.url, fit: BoxFit.fitWidth),
     );
   }
 
@@ -95,7 +104,6 @@ class _WikiPediaScreenState extends State<WikiPediaScreen> {
 
   void getNews(String query) async{
     print(query);
-   // final http.Response response = await http.get("https://newsapi.org/v2/top-headlines?country=in&apiKey=d2eccaadb59e4fa0b3275a828607f722");
     final http.Response response = await http.get("https://en.wikipedia.org//w/api.php?action=query&format=json&prop=pageimages%7Cpageterms&generator=prefixsearch&redirects=1&formatversion=2&piprop=thumbnail&pithumbsize=50&pilimit=10&wbptterms=description&gpssearch="+query+"&gpslimit=10");
     debugPrint(response.body);
     items.clear();
